@@ -7,12 +7,14 @@ namespace AssetsManager.API.Models.Entities
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity), Key]
         public int Id { get; set; }
-        [Required]
+
         public string? Name { get; set; }
         [Required]
         [Column(TypeName = "decimal(18,4)")]
         public decimal Price { get; set; }
+        [Column(TypeName = "Date")]
         public DateTime? ValidFrom { get; set; }
+        [Column(TypeName = "Date")]
         public DateTime? ValidTo { get; set; }
     }
 }

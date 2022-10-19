@@ -8,6 +8,7 @@ namespace AssetsManager.API.Interfaces
     {
         Task<Asset> AddAssetAsync(AssetInput assetInput);
         Task<IEnumerable<Asset>> Assets();
+        Task<IEnumerable<Asset>> Assets(DateTime date);
         Task<Asset> FindAssetAsync(int assetId);
         Task<Asset> UpdateAssetAsync(int assetId, AssetInput assetInput);
         public Task<Asset> DeleteAssetAsync(int assetId);

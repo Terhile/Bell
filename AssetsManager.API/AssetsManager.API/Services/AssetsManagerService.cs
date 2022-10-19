@@ -4,6 +4,7 @@ using AssetsManager.API.Inputs;
 using AssetsManager.API.Interfaces;
 using AssetsManager.API.Models.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Threading;
 
 namespace AssetsManager.API.Services
 {
@@ -24,12 +25,21 @@ namespace AssetsManager.API.Services
             {
                 throw new AssetsException($"Invalid input, Asset Name is required");
             }
+            if (assetInput.Price <0)
+            {
+                throw new AssetsException($"Invalid input, invalid asset Price {assetInput.Price}");
+            }
+            if (assetInput.ValidFrom.HasValue && assetInput.ValidTo.HasValue && assetInput.ValidTo.Value.Subtract(assetInput.ValidFrom.Value).Days < 0)
+            {
+                throw new AssetsException($"Invalid input, ValidTo Date cannot be before ValidFrom Date");
+            }
             var newAsset = new Asset()
             {
                 Name = assetInput.Name,
                 Price = assetInput.Price,
-                ValidFrom = assetInput.ValidFrom,
-                ValidTo = assetInput.ValidTo
+
+                ValidFrom = assetInput.ValidFrom??null,
+                ValidTo = assetInput.ValidTo??null
             };
             try
             {
@@ -54,6 +64,32 @@ namespace AssetsManager.API.Services
             {
 
                 assets = await _context.Assets.ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error while processing Assets request");
+                throw new AssetsException(ex.Message);
+            }
+            return assets;
+        }
+
+        public async Task<IEnumerable<Asset>> Assets(DateTime date)
+        {
+            var assets = new List<Asset>();
+            try
+            {
+
+                assets = await _context.Assets.Where(x =>
+                (!x.ValidFrom.HasValue && !x.ValidTo.HasValue)
+
+                || (x.ValidFrom.HasValue
+                   && x.ValidTo.HasValue
+                   && EF.Functions.DateDiffDay(date, x.ValidFrom) <= 0
+                   && EF.Functions.DateDiffDay(date, x.ValidTo) >= 0)
+
+                || (EF.Functions.DateDiffDay(date, x.ValidFrom) <= 0 && !x.ValidTo.HasValue)
+                || (EF.Functions.DateDiffDay(date, x.ValidTo) >= 0 && !x.ValidFrom.HasValue) //not expired yet
+                    ).ToListAsync();
             }
             catch (Exception ex)
             {
@@ -115,10 +151,14 @@ namespace AssetsManager.API.Services
                         assetToUpdate.Name = assetInput.Name;
                     if (assetInput.Price >= 0)
                         assetToUpdate.Price = assetInput.Price;
-                    if (assetInput.ValidFrom.HasValue)
-                        assetToUpdate.ValidFrom = assetInput.ValidFrom;
-                    if (assetInput.ValidTo.HasValue)
-                        assetToUpdate.ValidTo = assetInput.ValidTo;
+
+                    assetToUpdate.ValidFrom = assetInput.ValidFrom;
+                    assetToUpdate.ValidTo = assetInput.ValidTo;
+
+                    if (assetInput.ValidFrom.HasValue && assetInput.ValidTo.HasValue && assetInput.ValidTo.Value.Subtract(assetInput.ValidFrom.Value).Days > 0)
+                    {
+                        throw new AssetsException($"Invalid input, ValidTo Date cannot be before ValidFrom Date");
+                    }
                     _context.Assets.Update(assetToUpdate);
                     await _context.SaveChangesAsync();
                     _logger.LogInformation("Successfully updated {assetName} asset with Id {Id}", assetToUpdate.Name, assetToUpdate.Id);

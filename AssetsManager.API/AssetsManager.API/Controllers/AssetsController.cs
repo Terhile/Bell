@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace AssetsManager.API.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     public class AssetsController : Controller
     {
 
@@ -25,13 +25,20 @@ namespace AssetsManager.API.Controllers
             return Ok(asset);
         }
         [HttpGet("/Assets")]
-        public async Task<ActionResult<IEnumerable<WeatherForecast>>> Get()
+        public async Task<ActionResult<IEnumerable<WeatherForecast>>> AllAssets()
         {
 
             var asset = await _assetsManager.Assets();
             return Ok(asset);
         }
-        [HttpGet("/Assets/{Id}")]
+        [HttpGet("/Assets/{date:DateTime}")]
+        public async Task<ActionResult<IEnumerable<WeatherForecast>>> AssetsByMonthAndYear(DateTime date)
+        {
+
+            var asset = await _assetsManager.Assets(date);
+            return Ok(asset);
+        }
+        [HttpGet("/Assets/{Id:int}")]
         public async Task<ActionResult<Asset>> Get(int Id)
         {
             var asset = await _assetsManager.FindAssetAsync(Id);
