@@ -21,15 +21,17 @@ namespace Invoices.API.Services
 
         public async Task<IEnumerable<Invoice>> AllInvoices()
         {
-            return await _context.Invoices.ToListAsync();
+
+            return  await _context.Invoices.Where(x=>x.IssueYear == _context.Invoices.Max(y =>y.IssueDate).Year && x.IssueMonth == _context.Invoices.Max(s=>s.IssueDate).Month).ToListAsync();
         }
 
         public async Task GenerateInvoice(DateTime date)
         {
+            _logger.LogInformation("generating new invoice");
            var assets = await _assetsManagerService.InvoiceByDate(date);
             if (assets != null)
             {
-                await _context.Invoices.AddAsync(new Invoice() { IssueDate = DateTime.Now, Total = assets.Sum(x => x.Price) });
+                await _context.Invoices.AddAsync(new Invoice() { IssueDate =date, IssueYear = date.Year, IssueMonth = date.Month, Total = assets.Sum(x => x.Price) });
                 await _context.SaveChangesAsync();
             }
         }

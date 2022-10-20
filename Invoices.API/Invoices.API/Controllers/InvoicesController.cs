@@ -15,13 +15,13 @@ namespace Invoices.API.Controllers
             _invoiceService = invoiceService;
         }
         [HttpGet("/invoices")]
-        public async Task<ActionResult> Invoices(DateTime date)
+        public async Task<ActionResult> Invoices()
         {
 
-            await _invoiceService.GenerateInvoice(date);
-            return Created("/invoices", "");
+            var invoices =await _invoiceService.AllInvoices();
+            return Ok(invoices);
         }
-        [HttpPost("/invoices/{date}")]
+        [HttpPost("/invoices/{date:DateTime}")]
         public async Task<ActionResult> GenerateInvoice(DateTime date)
         {
 
