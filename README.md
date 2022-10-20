@@ -1,7 +1,7 @@
 # InventoryManage 
 Setup: 
 1. Ensure Docker Desktop is up and running 
-2. clone repo using git clone https://github.com/Terhile/Bell.git
+2. run this git command in your favourite terminal git clone https://github.com/Terhile/Bell.git
 3. Change directory to the solution root folder 
 4. double click on Dockerize.sh or Dockerize.bat 
 5. Navigate to http://localhost:8018/swagger/index.html to CRUD assets 
