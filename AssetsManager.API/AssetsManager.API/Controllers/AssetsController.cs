@@ -22,7 +22,7 @@ namespace AssetsManager.API.Controllers
         public async Task<ActionResult<Asset>> AddAsset(AssetInput assetInput) {
 
            var asset =await _assetsManager.AddAssetAsync(assetInput);
-            return Ok(asset);
+            return Created("/Assets",asset);
         }
         [HttpGet("/Assets")]
         public async Task<ActionResult<IEnumerable<WeatherForecast>>> AllAssets()
@@ -53,7 +53,7 @@ namespace AssetsManager.API.Controllers
             var asset = await _assetsManager.UpdateAssetAsync(Id,assetInput);
             if (asset == null)
                 return NotFound();
-            return Ok(asset);
+            return Created("/Assets/{Id}", asset);
         }
 
         [HttpDelete("/Assets/{Id}")]

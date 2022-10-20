@@ -1,0 +1,18 @@
+services:   
+    invoices-api:
+        build: .
+        restart: unless-stopped
+        env_file:
+            - ./local.env
+        ports:
+            - "8080:80"
+        container_name: invoice-manager-api
+    invoices-db:
+        image: "mcr.microsoft.com/mssql/server"
+        restart: unless-stopped
+        environment:
+            SA_PASSWORD: "Your_password123"
+            ACCEPT_EULA: "Y"
+        ports:
+            - "1444:1433"
+        container_name: invoice-manager-db
