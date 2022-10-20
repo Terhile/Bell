@@ -1,11 +1,11 @@
-# InventoryManage
-Setup:
-Ensure Docker Desktop is up and running
-clone repository to a folder
-Change directory to the solution root foler
-double click on Dockerize.sh or Dockerize.bat 
-Navigate to http://localhost:8018/swagger/index.html to CRUD assets
-Navigate to http://localhost:8080/swagger/index.html to generate and view invoices
+# InventoryManage 
+Setup: 
+1. Ensure Docker Desktop is up and running 
+2. clone repository to a folder 
+3. Change directory to the solution root folder 
+4. double click on Dockerize.sh or Dockerize.bat 
+5. Navigate to http://localhost:8018/swagger/index.html to CRUD assets 
+6. Navigate to http://localhost:8080/swagger/index.html to generate and view invoices 
 
 Example create asset\
 curl --request POST \
@@ -31,3 +31,7 @@ curl --request GET \
   
   Test Asset\
   ![image](https://user-images.githubusercontent.com/37341079/196955140-fb3f7021-ee19-4f1e-a676-aa92dafa4a70.png)
+  
+  Generated Invoices\
+  ![image](https://user-images.githubusercontent.com/37341079/196956553-f66e0ce8-40e5-438c-b4f4-18daf9d2f1f5.png)
+
